@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071f42">
+  <title>{% block title %}{{ store_name }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('home') }}"><span class="brand-icon">🛒</span><span><b>{{ store_name }}</b><small>Shop Smart, Live Better.</small></span></a>
+  <form class="search" action="{{ url_for('products') }}"><input name="q" placeholder="Search products, brands and more..." value="{{ request.args.get('q','') }}"><button aria-label="Search">⌕</button></form>
+  <nav class="nav-actions">
+    <a href="{{ url_for('products') }}">Shop</a>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('admin_dashboard') if current_user.is_admin else url_for('dashboard') }}">My Account</a>
+      <form class="inline" method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="nav-link">Logout</button></form>
+    {% else %}<a href="{{ url_for('login') }}">Login</a>{% endif %}
+    <a class="cart-link" href="{{ url_for('cart') }}">Cart <span>{{ cart_count }}</span></a>
+  </nav>
+</header>
+<div class="benefits"><span>🛡 Secure Login</span><span>🚚 Fast & Reliable Shipping</span><span>💳 Multiple Payment Options</span><span>🎧 Customer Support</span></div>
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-wrap">{% for category,message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+<main>{% block content %}{% endblock %}</main>
+<footer class="footer"><div><b>{{ store_name }}</b><p>Shop Smart, Live Better.</p></div><div><a href="{{ url_for('about') }}">About Us</a><a href="{{ url_for('contact') }}">Contact</a><a href="{{ url_for('products') }}">Shop</a></div><small>© {{ 2026 }} Nanu Bhai Store. Demo starter — configure business policies before launch.</small></footer>
+</body></html>
